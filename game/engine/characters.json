@@ -1,0 +1,11 @@
+[
+    {
+        "name" : "Narator",
+        "assets" : {
+            "root": "assets/characters/narator",
+            "portrait" : "assets/characters/narator.png"
+        },
+        "propertys" : {
+        }
+    }
+]

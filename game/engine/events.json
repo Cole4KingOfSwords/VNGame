@@ -1,0 +1,81 @@
+[
+    {
+        "name":"template   ",
+        "type":"onetime|repeating|special|random",
+        "conditions":["called|random args"],
+        "actions":[
+            {
+                "type":"dialog|goto|back",
+                "value": [
+                    ["","placeholder text"],
+                    ["","placeholder text"]
+                ]
+            }
+        ]
+    },
+    {
+        "name":"start",
+        "type":"system",
+        "conditions":["called"],
+        "actions":[
+            {
+                "type":"dialog",
+                "value":[
+                    ["","this is a beta"],
+                    ["","please enjoy"]
+                ]
+            },
+            {
+                "type":"switch",
+                "value":"startMenu"
+            },
+            {
+                "type":"goto",
+                "value":"home"
+            },
+            {
+                "type":"DEBUG",
+                "value":"starting"
+            }
+        ]
+    },
+    {
+        "name":"startGame",
+        "type":"onetime",
+        "conditions":["called"],
+        "actions":[
+            {
+                "type":"DEBUG",
+                "value":"F"
+            },
+            {
+                "type":"dialog",
+                "value":[
+                    ["", "I Dont have a story"]
+                ]
+            }
+        ]
+    },
+    {
+        "name":"settings",
+        "type":"system",
+        "conditions":["called"],
+        "actions":[
+            {
+                "type":"DEBUG",
+                "value":"settings"
+            }
+        ]
+    },
+    {
+        "name":"exit",
+        "type":"system",
+        "conditions":["called"],
+        "actions":[
+            {
+                "type":"",
+                "value":"Gtk.main_quit()"
+            }
+        ]
+    }
+]

@@ -1,0 +1,106 @@
+<interface>
+    <object class="GtkWindow" id="win">
+        <property name="title">Main Window</property>
+        <property name="default_width">800</property>
+        <property name="default_height">600</property>
+        <child>
+            <object class="GtkBox">
+                <child>
+                    <object class="GtkBox" id="sidebar">
+                        <property name="orientation">vertical</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkBox" id="contentBox">
+                    //This is empty, will be filled by the game
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+
+// Locations
+// -Moved to locations/main_locations.xml-
+
+// Menus
+// -Unused Menu for Template
+<object class="GtkBox" id="menuTemplate">
+    <child>
+        <object class="GtkLabel">
+            <property name="label">Menu Template</property>
+        </object>
+    </child>
+</object>
+
+// -Start Menu
+<object class="GtkBox" id="startMenu">
+    <property name="name">startMenu</property>
+    <property name="orientation">vertical</property>
+    <child>
+        <object class="GtkLabel">
+            <property name="label">VNGame beta</property>
+        </object>
+    </child>
+    <child>
+        <object class="GtkButton" id="startButton">
+            <property name="label">Start Game</property>
+        </object>
+    </child>
+    <child>
+        <object class="GtkButton" id="settingsButton">
+            <property name="label">settings</property>
+        </object>
+    </child>
+    <child>
+        <object class="GtkButton" id="exitButton">
+            <property name="label">Exit</property>
+        </object>
+    </child>
+</object>
+
+// -Settings Menu
+<object class="GtkBox" id="settingsMenu">
+    <property name="name">settingsMenu</property>
+    <child>
+        <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <child>
+                <object class="GtkLabel">
+                    <property name="label">settings</property>
+                </object>
+            </child>
+            <child>
+                <object class="GtkButton" id="backButton">
+                    <property name="label">back</property>
+                </object>
+            </child>
+        </object>
+    </child>
+    <child>
+        <object class="GtkBox" id="settingsContent">
+            <property name="orientation">vertical</property>
+            <child>
+                <object class="GtkLabel" id="fontSizeLabel">
+                    <property name="label">font size</property>
+                </object>
+            </child>
+            <child>
+                <object class="GtkBox" id="fontSpin"></object>
+                //this will be filled with a spinbutton
+            </child>
+            // i don't know what else to put here
+        </object>
+    </child>
+</object>
+
+// -Game Menus
+
+<object class="GtkBox" id="dialogMenu">
+    <property name="name">dialogMenu</property>
+    <property name="orientation">vertical</property>
+    <child>
+        <object class="GtkLabel">
+            <property name="label">Dialog Menu</property>
+        </object>
+    </child>
+</object>
