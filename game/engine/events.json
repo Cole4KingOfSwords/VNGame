@@ -40,23 +40,6 @@
         ]
     },
     {
-        "name":"startGame",
-        "type":"onetime",
-        "conditions":["called"],
-        "actions":[
-            {
-                "type":"DEBUG",
-                "value":"F"
-            },
-            {
-                "type":"dialog",
-                "value":[
-                    ["", "I Dont have a story"]
-                ]
-            }
-        ]
-    },
-    {
         "name":"settings",
         "type":"system",
         "conditions":["called"],

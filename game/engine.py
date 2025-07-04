@@ -3,10 +3,20 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import json #For reading save and bulk logic files
-
+import os
 #--Game
 class game(Gtk.Application):
     # --Classes
+    class source:
+        def __getitem__(self, key):
+            return getattr(self, key)
+        def __init__(self):
+            SrcPath = './game/engine/'
+            files = os.listdir(SrcPath)
+            for file in files:
+                setattr(self, file.split('.')[0], SrcPath+file)
+
+
     class window_manager(Gtk.Window):
         #--Window Classes
         class menu(Gtk.Box):
@@ -14,14 +24,12 @@ class game(Gtk.Application):
             def __init__(self, *args, **kwargs):
                 super().__init__()
 
-                self.window_manager = kwargs['manager']
                 self.data = data = kwargs['menu_data']
-
                 self.name = data['name']
                 
                 self.build = build = Gtk.Builder()
                 if 'manager' in data:
-                    self.build.add_from_string(getattr(getattr(self.window_manager.game, data['manager']), 'model'))
+                    self.build.add_from_string(getattr(getattr(window_manager.game, data['manager']), 'model'))
                 elif 'model' in data:
                     self.build.add_from_string(data['model'])
                 else:
@@ -32,12 +40,10 @@ class game(Gtk.Application):
             def connect(self):
                 xtions = self.data['xtions']
                 for xtion in xtions:
-                    self.build.get_object(xtion[0]).connect(xtion[1], getattr(self.window_manager.game.event_manager, xtion[2]) )
+                    self.build.get_object(xtion[0]).connect(xtion[1], getattr(event_manager, xtion[2]) )
         #--Window Funcs
         def __init__(self, *args, **kwargs):
             super().__init__()
-            #Game
-            self.game = kwargs['game']
 
             #Build
             self.build = Gtk.Builder()
@@ -81,6 +87,47 @@ class game(Gtk.Application):
             window.show_all() #End And Show
     class event_manager:
         class event:
+            class dialog(Gtk.Box):
+                def __init__(self, *args, **kwargs):
+                    super().__init__()
+
+                    self.label = [] #['name', 'image']
+                    self.text = ""
+                def __getitem__(self, key):
+                    match key:
+                        case 'text':
+                            return self.text
+                        case 'label':
+                            return self.label[0]
+                        case 'picture':
+                            return self.label[1]
+                def __setitem__(self, key, value):
+                    match key:
+                        case 'text':
+                            self.text = value
+                        case 'label':
+                            self.label[0] = value
+                        case 'picture':
+                            self.label[1] = value
+                def show(self):
+                    self.textBox = Gtk.TextView()
+                    self.textBox.set_editable(False)
+                    self.textBox.set_cursor_visible(False)
+                    self.textBox.set_wrap_mode(Gtk.WrapMode.WORD)
+
+                    #Check if label, create GtkLabel if one exists
+                    if self.dialogLabel[0] is not None:
+                        self.dialogLabel[0] = Gtk.Label(label=self.dialogLabel[1])
+                        self.prepend(child=self.dialogLabel[0])
+                    
+                    self.textBox.get_buffer().set_text(self.dialogtext)
+
+                    #add portrait if any
+                    if self.dialogLabel[2] is not None:
+                        self.dialogLabel[2] = Gtk.Image()
+                        self.pack_end(child=self.dialogLabel[2])
+                    self.show_all()
+
             def __init__(self, **kwargs):
                 #--Event Vars
                 self.times_triggered = 0
@@ -101,13 +148,18 @@ class game(Gtk.Application):
                         case 'goto':
                             pass
                         case 'switch':
-                            self.event_handler.game.window_manager.switch(menuName=action['value'])
+                            window_manager.switch(menuName=action['value'])
                         case 'modify':
                             pass
                         case 'dialog':
+                            dialog_menu = None
                             for dialog in action['value']:
-                                print(dialog[0], dialog[1])
-                                self.event_handler.game.window_manager.switch(menuName='dialogMenu')
+                                tmp = self.dialog()
+                                tmp['text'] = dialog[1]
+                                
+
+                                
+                            window_manager.switch(menuName='dialogMenu')
                         case 'DEBUG':
                             print(action['value'])
                         case _:
@@ -117,11 +169,11 @@ class game(Gtk.Application):
 
         #--Funcs
         def __init__(self, *args, **kwargs):
-            self.game = kwargs['game']
+            pass
 
             self.read_events()
         def read_events(self):
-            with open('game/engine/events.json', 'r') as file:
+            with open(getattr(source, 'events'), 'r') as file:
                 events_data = json.load(file)
                 for event in events_data:
                     self.event(parent=self, data=event)
@@ -129,22 +181,23 @@ class game(Gtk.Application):
         model = "<interface><object class='GtkBox'></object>" #placeHolder
         # --Location Manager Funcs
         def __init__(self, *args, **kwargs):
-            self.game = kwargs['game']
+            pass
 
     # --Funcs
     def __init__(self, *args, **kwargs):
         super().__init__(application_id='org.cole4king.vngame')
 
-        #Window
-        self.event_manager = self.event_manager(game=self)
+        global source, event_manager, window_manager, location_manager
+        source = self.source()
+        event_manager = self.event_manager()
+        window_manager = self.window_manager()
+        location_manager = self.location_manager()
 
-        self.window_manager = self.window_manager(game=self)
-
-        self.location_manager = self.location_manager(game=self)
-
-        self.event_manager.start()
+        event_manager.start()
     
 game = game()
-for item in game.window_manager.menus:
-    print(item, game.window_manager.menus[item])
+for item in window_manager.menus:
+    print(item, window_manager.menus[item])
 Gtk.main()
+# TODO: Add a debug window for runtime diagnostics and logging
+# TODO: Change events to dynamicy load in. IE:events which are imposible do not get loaded
