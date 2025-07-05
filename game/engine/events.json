@@ -19,6 +19,10 @@
         "conditions":["called"],
         "actions":[
             {
+                "type":"DEBUG",
+                "value":"starting"
+            },
+            {
                 "type":"dialog",
                 "value":[
                     ["","this is a beta"],
@@ -32,10 +36,6 @@
             {
                 "type":"goto",
                 "value":"home"
-            },
-            {
-                "type":"DEBUG",
-                "value":"starting"
             }
         ]
     },

@@ -3,7 +3,7 @@
         "name":"startMenu",
         "model":"<interface><object class='GtkBox' id='startMenu'><property name='name'>startMenu</property><property name='orientation'>vertical</property><child><object class='GtkLabel'><property name='label'>VNGame beta</property></object></child><child>h<object class='GtkButton' id='startButton'><property name='label'>Start Game</property></object></child><child><object class='GtkButton' id='settingsButton'><property name='label'>settings</property></object></child><child><object class='GtkButton' id='exitButton'><property name='label'>Exit</property></object></child></object>",
         "xtions":[
-            ["startButton","clicked", "startGame"],
+            ["startButton","clicked", "start"],
             ["settingsButton", "clicked", "settings"],
             ["exitButton", "clicked", "exit"]
         ]

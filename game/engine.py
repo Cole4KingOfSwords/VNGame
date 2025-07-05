@@ -4,7 +4,10 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import json #For reading save and bulk logic files
 import os
+import sys
 #--Game
+global DEBUG
+DEBUG = None
 class game(Gtk.Application):
     # --Classes
     class source:
@@ -23,20 +26,21 @@ class game(Gtk.Application):
             # --Menu Funcs
             def __init__(self, *args, **kwargs):
                 super().__init__()
+                if 'menu_data' in kwargs:
+                    self.data = data = kwargs['menu_data']
+                    self.name = data['name']
 
-                self.data = data = kwargs['menu_data']
-                self.name = data['name']
-                
-                self.build = build = Gtk.Builder()
-                if 'manager' in data:
-                    self.build.add_from_string(getattr(getattr(window_manager.game, data['manager']), 'model'))
-                elif 'model' in data:
-                    self.build.add_from_string(data['model'])
-                else:
-                    raise ValueError("No Object")
-                self.add(build.get_object(self.name))
-                if 'xtions' in self.data:
-                    self.connect()
+                    self.build = build = Gtk.Builder()
+                    if 'manager' in data:
+                        self.build.add_from_string(getattr(getattr(window_manager.game, data['manager']), 'model'))
+                    elif 'model' in data:
+                        self.build.add_from_string(data['model'])
+                    if 'xtions' in self.data:
+                        self.connect()
+                    if build.get_object(self.name) is not None:
+                        self.add(build.get_object(self.name))
+                elif 'name' in kwargs:
+                    self.name = kwargs['name']
             def connect(self):
                 xtions = self.data['xtions']
                 for xtion in xtions:
@@ -80,7 +84,7 @@ class game(Gtk.Application):
             current_menu = self.current_menu
             next_menu = kwargs['menuName']
             window = self.window
-
+            if 'DEBUG' in globals() : print("|-DEBUG_SizeOF-" + self.menus[next_menu].name + "-", sys.getsizeof(self.menus[next_menu]))
             #--Do
             window.remove(window.get_child())
             window.add(self.menus[next_menu])
@@ -137,35 +141,59 @@ class game(Gtk.Application):
                 self.conditions =  data['conditions']
                 self.type = data['type']
                 self.actions = data['actions']
-                print(self.name)
                 setattr(self.event_handler, self.name, self)
             def __call__(self, *args, **kwargs):
+                # TODO: Fix this func, PRIORITY 1
                 #--Vars
                 actions = self.actions
                 #--Do
-                for action in actions:
+                if self.actions:
+                    pass
+                else:
+                    Gtk.main_quit()
+                    raise RuntimeError('Expected Action To exec')
+                for index, action in enumerate(actions):
+                    if action is None and index < len(actions): 
+                        
+                        continue
                     match action['type']:
                         case 'goto':
                             pass
                         case 'switch':
                             window_manager.switch(menuName=action['value'])
                         case 'modify':
-                            pass
+                            continue
                         case 'dialog':
-                            dialog_menu = None
+                            if 'DEBUG' in globals(): print('|-DEBUG-dialog_event' + self.name)
+                            dialog_menu = window_manager.menu()
+                            dialog_menu.name = self.name + str(index)
                             for dialog in action['value']:
                                 tmp = self.dialog()
                                 tmp['text'] = dialog[1]
-                                
+
+                            else:
+                                dialog_menu.add(Gtk.Label(label="End of Dialog"))
+                                continue_button = Gtk.Button(label="Continue")
+                                continue_button.connect("clicked", self)
+                                dialog_menu.add(continue_button)
+                                dialog_menu.show_all()
+
+
+                            window_manager.menus[dialog_menu.name] = dialog_menu
+
 
                                 
-                            window_manager.switch(menuName='dialogMenu')
+                            window_manager.switch(menuName=dialog_menu.name)
+                            self.actions[index] = None
+                            break
                         case 'DEBUG':
-                            print(action['value'])
+                            print('|-DEBUG-' + action['value'] + '...')
                         case _:
                             exec(str(action['value']))
-                    self.actions.remove(action)
-                    break
+                    self.actions[index] = None
+                    if 'DEBUG' in globals(): print('|-DEBUG-'+action['type']+'_event-REMOVED...')
+
+
 
         #--Funcs
         def __init__(self, *args, **kwargs):
@@ -196,8 +224,7 @@ class game(Gtk.Application):
         event_manager.start()
     
 game = game()
-for item in window_manager.menus:
-    print(item, window_manager.menus[item])
 Gtk.main()
-# TODO: Add a debug window for runtime diagnostics and logging
-# TODO: Change events to dynamicy load in. IE:events which are imposible do not get loaded
+# TODO piorety 10: Add a debug window for runtime diagnostics and logging
+# TODO piorety 10: Change events to dynamicy load in. IE:events which are imposible do not get loaded
+# TODO piorety 10: Menu culling for saving memory
